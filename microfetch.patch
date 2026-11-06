@@ -1,0 +1,19 @@
+diff --git a/crates/lib/src/system.rs b/crates/lib/src/system.rs
+index 1db8510..2637092 100644
+--- a/crates/lib/src/system.rs
++++ b/crates/lib/src/system.rs
+@@ -27,11 +27,11 @@ pub fn get_username_and_hostname(utsname: &UtsName) -> String {
+     + colors.reset.len();
+   let mut result = String::with_capacity(capacity);
+ 
+-  result.push_str(colors.yellow);
++  result.push_str(colors.magenta);
+   result.push_str(username);
+-  result.push_str(colors.red);
++  result.push_str(colors.blue);
+   result.push('@');
+-  result.push_str(colors.green);
++  result.push_str(colors.cyan);
+   result.push_str(hostname);
+   result.push_str(colors.reset);
+ 
