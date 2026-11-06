@@ -13,8 +13,8 @@ in
 
   nix.nixPath = [
     "nixos-config=/home/lune/.config/nixos/configuration.nix"
-	"nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
-	"/nix/var/nix/profiles/per-user/root/channels"
+	  "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
+	  "/nix/var/nix/profiles/per-user/root/channels"
   ];
   
   boot = {
@@ -34,7 +34,7 @@ in
   };
   systemd.services.ly = {
     serviceConfig = {
-	  ExecStartPre = "${pkgs.coreutils}/bin/printf '%b' '\\e]P0${bg}\\e]P7${fg}\\ec'";
+	  ExecStartPre = "${pkgs.coreutils}/bin/printf '%%b' '\\e]P0${bg}\\e]P7${fg}\\ec'";
 	  };
   };
 
@@ -135,6 +135,7 @@ in
     description = "lune";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
+    defaultUserShell = pkgs.fish;
   };
 
   nixpkgs.config.allowUnfree = true;
