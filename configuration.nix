@@ -32,6 +32,7 @@
     vim
     wget
     git
+	gcc
     firefox
     kitty
     neovim
@@ -72,6 +73,7 @@
 	peaclock
 	nh
 	inputs.limusic.packages.${pkgs.stdenv.hostPlatform.system}.limusic
+	tree-sitter
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
