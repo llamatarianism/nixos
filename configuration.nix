@@ -18,7 +18,10 @@ in
   ];
   
   boot = {
-    plymouth.enable = true;
+    plymouth = {
+      enable = true;
+      theme = "solar";
+    };
 
     consoleLogLevel = 3;
     kernelParams = [ "quiet" "rd.udev.log_level=3" "rd.systemd.show_status=auto" ];
@@ -30,11 +33,11 @@ in
   services.flatpak.enable = true;
   services.displayManager.ly = {
     enable = true;
-	settings = { bigclock = "en"; };
+	  settings = { bigclock = "en"; };
   };
-  systemd.services.ly = {
-    serviceConfig = {
-	  ExecStartPre = "${pkgs.coreutils}/bin/printf '%%b' '\\e]P0${bg}\\e]P7${fg}\\ec'";
+  systemd.services.display-manager = {
+     serviceConfig = {
+	    ExecStartPre = "${pkgs.coreutils}/bin/printf '%%b' '\\e]P0${bg}\\e]P7${fg}\\ec'";
 	  };
   };
 
@@ -54,7 +57,7 @@ in
     vim
     wget
     git
-	gcc
+	  gcc
     firefox
     kitty
     neovim
@@ -79,23 +82,25 @@ in
     ly
     pavucontrol
     playerctl
-	lavat
-	pipx
-	ffmpeg
-	imagemagick
-	gowall
-	yazi
-	adw-gtk3
-	bat
-	cowsay
-	cbonsai
-	astroterm
-	pipes
-	asciiquarium
-	peaclock
-	nh
-	inputs.limusic.packages.${pkgs.stdenv.hostPlatform.system}.limusic
-	tree-sitter
+  	lavat
+  	pipx
+  	ffmpeg
+  	imagemagick
+  	gowall
+  	yazi
+  	adw-gtk3
+  	bat
+  	cowsay
+  	cbonsai
+  	astroterm
+  	pipes
+  	asciiquarium
+  	peaclock
+  	nh
+  	inputs.limusic.packages.${pkgs.stdenv.hostPlatform.system}.limusic
+  	tree-sitter
+    fzf
+    gimp
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -129,13 +134,15 @@ in
   };
 
   console.keyMap = "uk";
+  
+  programs.fish.enable = true;
 
   users.users."lune" = {
     isNormalUser = true;
     description = "lune";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
-    defaultUserShell = pkgs.fish;
+    shell = pkgs.fish;
   };
 
   nixpkgs.config.allowUnfree = true;
