@@ -2,7 +2,7 @@
 
 let
   bg = "0B1824";
-  fg = "B1DFA6";
+  fg = "FFFFFF";
 in
 {
   imports =
@@ -28,6 +28,8 @@ in
   };
 
   programs.umbriel.enable = true;
+  programs.sway.enable = true;
+  programs.dwl.enable = true;
 
   # systemd slop
   services.flatpak.enable = true;
@@ -104,6 +106,8 @@ in
     cmatrix
     sway
     waybar
+    i3status-rust
+    dwl
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
