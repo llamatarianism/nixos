@@ -101,6 +101,9 @@ in
   	tree-sitter
     fzf
     gimp
+    cmatrix
+    sway
+    waybar
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -154,15 +157,17 @@ in
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
       noto-fonts-color-emoji
-	  nerd-fonts.sauce-code-pro
-	  cantarell-fonts
+      nerd-fonts.sauce-code-pro
+	    cantarell-fonts
+      redhat-official-fonts
+      inconsolata
 	];
 
 	fontconfig = {
       enable = true;
 	  defaultFonts = {
         emoji = [ "Noto Color Emoji" ];
-        monospace = [ "Sometype Mono" ];
+        monospace = [ "Red Hat Mono" ];
         sansSerif = [ "Cantarell" ];
         serif = [ "Noto Serif CJK JP" ];
       };
