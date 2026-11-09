@@ -85,6 +85,7 @@ in
     zip
     unzip
     nix-search-cli
+#    inputs.microfetch.packages.${pkgs.stdenv.hostPlatform.system}.default
     microfetch
     bibata-cursors
     bitwarden-cli
