@@ -28,7 +28,17 @@ in
   };
 
   programs.umbriel.enable = true;
-  programs.sway.enable = true;
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+  };
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [ 
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-gtk
+    ];
+  };
   programs.dwl.enable = true;
 
   # systemd slop
@@ -42,8 +52,8 @@ in
 	    ExecStartPre = "${pkgs.coreutils}/bin/printf '%%b' '\\e]P0${bg}\\e]P7${fg}\\ec'";
 	  };
   };
-
-
+  
+  services.dbus.enable = true;
   services.keyd = {
     enable = true;
     keyboards.default = {
@@ -105,10 +115,22 @@ in
     gimp
     cmatrix
     sway
+    xdg-desktop-portal
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-wlr
     waybar
     i3status-rust
-    dwl
+    autotiling
+    fuzzel
+    wlogout
+    btop
+    mako
   ];
+
+  environment.variables = {
+    XCURSOR_THEME = "Bibata-Modern-Classic";
+    XCURSOR_SIZE = "24";
+  };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings = {
@@ -165,13 +187,14 @@ in
 	    cantarell-fonts
       redhat-official-fonts
       inconsolata
+      font-awesome
 	];
 
 	fontconfig = {
       enable = true;
 	  defaultFonts = {
         emoji = [ "Noto Color Emoji" ];
-        monospace = [ "Red Hat Mono" ];
+        monospace = [ "Sometype Mono" ];
         sansSerif = [ "Cantarell" ];
         serif = [ "Noto Serif CJK JP" ];
       };
