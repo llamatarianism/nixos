@@ -4,7 +4,8 @@
     umbriel.url    = "github:noctalia-dev/umbriel/cachix";
     noctalia.url   = "github:noctalia-dev/noctalia/cachix";
     limusic.url    = "github:arch-fan/nur-packages";
-    microfetch.url = "github:NotAShelf/microfetch/543a1597baf680762bdf72e33efe1e267ad6a847"; 
+    microfetch.url = "github:NotAShelf/microfetch/543a1597baf680762bdf72e33efe1e267ad6a847";
+    waybar.url     = "github:Alexays/Waybar";
   };
 
   outputs = { self, nixpkgs, ...  }@inputs: {

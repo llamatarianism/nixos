@@ -26,7 +26,7 @@ in
     consoleLogLevel = 3;
     kernelParams = [ "quiet" "rd.udev.log_level=3" "rd.systemd.show_status=auto" ];
   };
-
+  
   programs.umbriel.enable = true;
   programs.sway = {
     enable = true;
@@ -40,6 +40,16 @@ in
     ];
   };
   programs.dwl.enable = true;
+
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [ intel-media-driver linux-firmware ];
+  };
+
+  programs.gpu-screen-recorder = {
+    enable = true;
+    ui.enable = true;
+  };
 
   # systemd slop
   services.flatpak.enable = true;
@@ -66,6 +76,13 @@ in
   };
 
   environment.systemPackages = with pkgs; [
+    linux-firmware
+    linuxHeaders
+    intel-media-driver
+    libva
+    libva-utils
+    mesa
+    openh264
     vim
     wget
     git
@@ -85,7 +102,6 @@ in
     zip
     unzip
     nix-search-cli
-#    inputs.microfetch.packages.${pkgs.stdenv.hostPlatform.system}.default
     microfetch
     bibata-cursors
     bitwarden-cli
@@ -119,13 +135,19 @@ in
     xdg-desktop-portal
     xdg-desktop-portal-gtk
     xdg-desktop-portal-wlr
-    waybar
-    i3status-rust
     autotiling
     fuzzel
     wlogout
     btop
     mako
+    inputs.waybar.packages.${pkgs.stdenv.hostPlatform.system}.default
+    swaybg
+    (pkgs.python3.withPackages (python-pkgs: [
+      python-pkgs.requests
+    ]))
+    imv
+    nsxiv
+    gpu-screen-recorder
   ];
 
   environment.variables = {
@@ -170,7 +192,7 @@ in
   users.users."lune" = {
     isNormalUser = true;
     description = "lune";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "input" ];
     packages = with pkgs; [];
     shell = pkgs.fish;
   };
@@ -191,15 +213,16 @@ in
       font-awesome
 	];
 
-	fontconfig = {
+  	fontconfig = {
       enable = true;
-	  defaultFonts = {
+  	  defaultFonts = {
         emoji = [ "Noto Color Emoji" ];
-        monospace = [ "Sometype Mono" ];
-        sansSerif = [ "Cantarell" ];
+        monospace = [ "Sometype Mono" "SauceCodePro Nerd Font Propo" ];
+        sansSerif = [ "Cantarell" "Noto Sans" ];
         serif = [ "Noto Serif CJK JP" ];
       };
-	};
+      useEmbeddedBitmaps = true;
+  	};
   };
 
   # This option defines the first version of NixOS you have installed on this particular machine,
