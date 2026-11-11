@@ -113,7 +113,6 @@ in
     pavucontrol
     playerctl
   	lavat
-  	pipx
   	ffmpeg
   	imagemagick
   	gowall
@@ -143,14 +142,15 @@ in
     mako
     inputs.waybar.packages.${pkgs.stdenv.hostPlatform.system}.default
     swaybg
-    (pkgs.python3.withPackages (python-pkgs: [
-      python-pkgs.requests
+    (pkgs.python3.withPackages (python-pkgs: with python-pkgs; [
+      requests
     ]))
     imv
     nsxiv
     gpu-screen-recorder
     waylock
-    pywal16
+    (pywal16.override { withColorz = true; withColorthief = true; withFastColorthief = true; withHaishoku = true; withModernColorthief = true; })
+    terminal-rain-lightning
   ];
 
   environment.variables = {
@@ -225,6 +225,13 @@ in
         serif = [ "Noto Serif CJK JP" ];
       };
       useEmbeddedBitmaps = true;
+
+      hinting = {
+        enable = true;
+        style = "full";
+      };
+
+      subpixel.rgba = "rgb";
   	};
   };
 
