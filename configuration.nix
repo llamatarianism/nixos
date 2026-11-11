@@ -34,7 +34,8 @@ in
   };
   xdg.portal = {
     enable = true;
-    extraPortals = with pkgs; [ 
+    xdgOpenUsePortal = true;
+    extraPortals = with pkgs; [
       xdg-desktop-portal-wlr
       xdg-desktop-portal-gtk
     ];
@@ -148,6 +149,8 @@ in
     imv
     nsxiv
     gpu-screen-recorder
+    waylock
+    pywal16
   ];
 
   environment.variables = {
