@@ -1,0 +1,19 @@
+diff --git a/config.def.h b/config.def.h
+index ead1509..d808793 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -94,12 +94,12 @@ static const int THUMB_SIZE = 3;
+ static const unsigned int USED_MODMASK = ShiftMask | ControlMask | Mod1Mask;
+ 
+ /* abort the keyhandler */
+-static const KeySym KEYHANDLER_ABORT = XK_Escape;
++static const KeySym KEYHANDLER_ABORT = XK_q;
+ 
+ /* keyboard mappings for image and thumbnail mode: */
+ static const keymap_t keys[] = {
+ 	/* modifiers    key               function              argument */
+-	{ 0,            XK_q,             g_quit,               0 },
++	{ 0,            XK_Escape,        g_quit,               0 },
+ 	{ 0,            XK_Q,             g_pick_quit,          0 },
+ 	{ 0,            XK_Return,        g_switch_mode,        None },
+ 	{ 0,            XK_f,             g_toggle_fullscreen,  None },

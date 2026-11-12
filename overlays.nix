@@ -2,8 +2,13 @@
 {
   nixpkgs.overlays = [
     (final: prev: {
-      microfetch = inputs.microfetch.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (o: {
-        patches = (o.patches or []) ++ [ ./microfetch.patch ];
+      microfetch = inputs.microfetch.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+        patches = (old.patches or []) ++ [ ./microfetch.patch ];
+      });
+    })
+    (final: prev: {
+      nsxiv = prev.nsxiv.overrideAttrs (old: {
+        patches = (old.patches or []) ++ [ ./nsxiv.patch ];
       });
     })
   ];

@@ -151,6 +151,9 @@ in
     waylock
     (pywal16.override { withColorz = true; withColorthief = true; withFastColorthief = true; withHaishoku = true; withModernColorthief = true; })
     terminal-rain-lightning
+    cava
+    iniparser
+    fftw
   ];
 
   environment.variables = {
