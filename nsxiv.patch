@@ -1,8 +1,223 @@
+diff --git a/.github/workflows/lock.yml b/.github/workflows/lock.yml
+deleted file mode 100644
+index eef34e1..0000000
+--- a/.github/workflows/lock.yml
++++ /dev/null
+@@ -1,21 +0,0 @@
+-name: 'Repo Lockdown'
+-
+-on:
+-  pull_request_target:
+-    types: opened
+-
+-permissions:
+-  pull-requests: write
+-
+-jobs:
+-  action:
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: dessant/repo-lockdown@v2
+-        with:
+-          pr-comment: >
+-            Hi, thanks for the Pull-Request.
+-            However this repository is a read-only mirror, main development of nsxiv happens over at [Codeberg](https://codeberg.org/nsxiv/nsxiv).
+-            Please open your Pull-Request over on the Codeberg Repo.
+-            Otherwise you may also e-mail the patch (obtained via `git format-patch`) to any of the [active maintainers](https://nsxiv.codeberg.page/man/#CURRENT%20MAINTAINERS) instead.
+-
+diff --git a/README.md b/README.md
+index 8e14763..ce156c9 100644
+--- a/README.md
++++ b/README.md
+@@ -3,7 +3,7 @@
+ [![Codeberg](https://img.shields.io/badge/Hosted_at-Codeberg-%232185D0?style=flat-square&logo=CodeBerg)](https://codeberg.org/nsxiv/nsxiv)
+ [![tags](https://img.shields.io/github/v/tag/nsxiv/nsxiv?style=flat-square)](https://codeberg.org/nsxiv/nsxiv/tags)
+ [![license](https://img.shields.io/badge/license-GPL--2.0%2B-lightgreen?style=flat-square)](https://codeberg.org/nsxiv/nsxiv/src/branch/master/LICENSE)
+-[![loc](https://img.shields.io/tokei/lines/github/nsxiv/nsxiv?color=red&style=flat-square)](https://codeberg.org/nsxiv/nsxiv)
++[![loc](https://img.shields.io/endpoint?url=https://ghloc.vercel.app/api/nsxiv/nsxiv/badge?filter=.c$,.h$&color=red&style=flat-square&label=Lines%20of%20Code)](https://codeberg.org/nsxiv/nsxiv)
+ 
+ **Neo (or New or Not) Simple (or Small or Suckless) X Image Viewer**
+ --------------------------------------------------------------------
+diff --git a/autoreload.c b/autoreload.c
+index 1a889dc..5daefe7 100644
+--- a/autoreload.c
++++ b/autoreload.c
+@@ -28,15 +28,11 @@
+ #include <sys/inotify.h>
+ #include <unistd.h>
+ 
+-static struct {
+-	char *buf;
+-	size_t len;
+-} scratch;
+-
+ void arl_init(arl_t *arl)
+ {
+ 	arl->fd = inotify_init1(IN_CLOEXEC | IN_NONBLOCK);
+-	arl->wd_dir = arl->wd_file = -1;
++	arl->wd_dir = arl->wd_file = arl->wd_link = arl->wd_link_dir = -1;
++	arl->filename = arl->linkname = NULL;
+ 	if (arl->fd == -1)
+ 		error(0, 0, "Could not initialize inotify, no automatic image reloading");
+ }
+@@ -45,7 +41,8 @@ CLEANUP void arl_cleanup(arl_t *arl)
+ {
+ 	if (arl->fd != -1)
+ 		close(arl->fd);
+-	free(scratch.buf);
++	free(arl->filename);
++	free(arl->linkname);
+ }
+ 
+ static void rm_watch(int fd, int *wd)
+@@ -63,32 +60,37 @@ static void add_watch(int fd, int *wd, const char *path, uint32_t mask)
+ 		error(0, errno, "inotify: %s", path);
+ }
+ 
+-static char *arl_scratch_push(const char *filepath, size_t len)
++static char *arl_watch_basedir(int fd, int *wd_dir_fd, const char *path)
+ {
+-	if (scratch.len < len + 1) {
+-		scratch.len = len + 1;
+-		scratch.buf = erealloc(scratch.buf, scratch.len);
+-	}
+-	scratch.buf[len] = '\0';
+-	return memcpy(scratch.buf, filepath, len);
++	char dot[] = ".", *base = strrchr(path, '/');
++	char *dir = base != NULL ? estrndup(path, MAX(base - path, 1)) : dot;
++	add_watch(fd, wd_dir_fd, dir, IN_CREATE | IN_MOVED_TO);
++	if (dir != dot)
++		free(dir);
++	return estrdup(base != NULL ? base + 1 : path);
+ }
+ 
+-void arl_add(arl_t *arl, const char *filepath)
++void arl_add(arl_t *arl, const fileinfo_t *file)
+ {
+-	char *base, *dir;
+-
+ 	if (arl->fd == -1)
+ 		return;
+ 
+ 	rm_watch(arl->fd, &arl->wd_dir);
+ 	rm_watch(arl->fd, &arl->wd_file);
+-	add_watch(arl->fd, &arl->wd_file, filepath, IN_CLOSE_WRITE | IN_DELETE_SELF);
+-
+-	base = strrchr(filepath, '/');
+-	assert(base != NULL && "filepath must be result of realpath(3)");
+-	dir = arl_scratch_push(filepath, MAX(base - filepath, 1));
+-	add_watch(arl->fd, &arl->wd_dir, dir, IN_CREATE | IN_MOVED_TO);
+-	arl->filename = arl_scratch_push(base + 1, strlen(base + 1));
++	rm_watch(arl->fd, &arl->wd_link);
++	rm_watch(arl->fd, &arl->wd_link_dir);
++	free(arl->filename);
++	arl->filename = NULL;
++	free(arl->linkname);
++	arl->linkname = NULL;
++
++	add_watch(arl->fd, &arl->wd_file, file->path, IN_CLOSE_WRITE | IN_DELETE_SELF);
++	arl->filename = arl_watch_basedir(arl->fd, &arl->wd_dir, file->path);
++	if (file->flags & FF_SYMLINK) {
++		add_watch(arl->fd, &arl->wd_link, file->name,
++		          IN_DELETE_SELF | IN_MOVE_SELF | IN_DONT_FOLLOW);
++		arl->linkname = arl_watch_basedir(arl->fd, &arl->wd_link_dir, file->name);
++	}
+ }
+ 
+ bool arl_handle(arl_t *arl)
+@@ -116,6 +118,11 @@ bool arl_handle(arl_t *arl)
+ 				reload = true;
+ 			} else if (e->wd == arl->wd_file && (e->mask & IN_DELETE_SELF)) {
+ 				rm_watch(arl->fd, &arl->wd_file);
++			} else if (e->wd == arl->wd_link && (e->mask & (IN_DELETE_SELF | IN_MOVE_SELF))) {
++				rm_watch(arl->fd, &arl->wd_link);
++			} else if (e->wd == arl->wd_link_dir && (e->mask & (IN_CREATE | IN_MOVED_TO))) {
++				if (STREQ(e->name, arl->linkname))
++					reload = true;
+ 			} else if (e->wd == arl->wd_dir && (e->mask & (IN_CREATE | IN_MOVED_TO))) {
+ 				if (STREQ(e->name, arl->filename))
+ 					reload = true;
+@@ -137,10 +144,10 @@ void arl_cleanup(arl_t *arl)
+ 	(void)arl;
+ }
+ 
+-void arl_add(arl_t *arl, const char *filepath)
++void arl_add(arl_t *arl, const fileinfo_t *file)
+ {
+ 	(void)arl;
+-	(void)filepath;
++	(void)file;
+ }
+ 
+ bool arl_handle(arl_t *arl)
+diff --git a/commands.c b/commands.c
+index 3257b1e..03a6b7b 100644
+--- a/commands.c
++++ b/commands.c
+@@ -477,3 +477,11 @@ bool ct_select(arg_t _)
+ 
+ 	return dirty;
+ }
++
++bool ct_toggle_squared(arg_t _)
++{
++	tns_toggle_squared();
++	ct_reload_all(0);
++
++	return true;
++}
+diff --git a/commands.h b/commands.h
+index 4e694f0..4de6b4d 100644
+--- a/commands.h
++++ b/commands.h
+@@ -46,6 +46,7 @@ bool ct_reload_all(arg_t);
+ bool ct_scroll(arg_t);
+ bool ct_drag_mark_image(arg_t);
+ bool ct_select(arg_t);
++bool ct_toggle_squared(arg_t);
+ 
+ #ifdef INCLUDE_MAPPINGS_CONFIG
+ /* global */
+@@ -94,6 +95,7 @@ bool ct_select(arg_t);
+ #define t_scroll { ct_scroll, MODE_THUMB }
+ #define t_drag_mark_image { ct_drag_mark_image, MODE_THUMB }
+ #define t_select { ct_select, MODE_THUMB }
++#define t_toggle_squared { ct_toggle_squared, MODE_THUMB }
+ 
+ #endif /* _MAPPINGS_CONFIG */
+ #endif /* COMMANDS_H */
 diff --git a/config.def.h b/config.def.h
-index ead1509..d808793 100644
+index ead1509..2249ee8 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -94,12 +94,12 @@ static const int THUMB_SIZE = 3;
+@@ -7,12 +7,12 @@ static const int WIN_HEIGHT = 600;
+ /* colors and font can be overwritten via X resource properties.
+  * See nsxiv(1), X(7) section Resources and xrdb(1) for more information.
+  *                                      X resource            value (NULL == default) */
+-static const char *WIN_BG[]   = { "Nsxiv.window.background",   "white" };
+-static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "black" };
+-static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",      NULL };
++static const char *WIN_BG[]   = { "Nsxiv.window.background",   "#12282F" };
++static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "#B1DFA6" };
++static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",     "#D4B071" };
+ #if HAVE_LIBFONTS
+-static const char *BAR_BG[]   = { "Nsxiv.bar.background",       NULL };
+-static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",       NULL };
++static const char *BAR_BG[]   = { "Nsxiv.bar.background",      "#5A8F78" };
++static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",      "#E8E6C8" };
+ static const char *BAR_FONT[] = { "Nsxiv.bar.font",            "monospace-8" };
+ 
+ /* if true, statusbar appears on top of the window */
+@@ -87,6 +87,8 @@ static const int thumb_sizes[] = { 32, 64, 96, 128, 160 };
+ /* thumbnail size at startup, index into thumb_sizes[]: */
+ static const int THUMB_SIZE = 3;
+ 
++static bool SQUARE_THUMBS = true;
++
+ #endif
+ #ifdef INCLUDE_MAPPINGS_CONFIG
+ 
+@@ -94,14 +96,14 @@ static const int THUMB_SIZE = 3;
  static const unsigned int USED_MODMASK = ShiftMask | ControlMask | Mod1Mask;
  
  /* abort the keyhandler */
@@ -13,7 +228,433 @@ index ead1509..d808793 100644
  static const keymap_t keys[] = {
  	/* modifiers    key               function              argument */
 -	{ 0,            XK_q,             g_quit,               0 },
+-	{ 0,            XK_Q,             g_pick_quit,          0 },
+-	{ 0,            XK_Return,        g_switch_mode,        None },
 +	{ 0,            XK_Escape,        g_quit,               0 },
- 	{ 0,            XK_Q,             g_pick_quit,          0 },
- 	{ 0,            XK_Return,        g_switch_mode,        None },
++	{ 0,            XK_Return,        g_pick_quit,          0 },
++	{ 0,            XK_q,             g_switch_mode,        None },
  	{ 0,            XK_f,             g_toggle_fullscreen,  None },
+ 	{ 0,            XK_b,             g_toggle_bar,         None },
+ 	{ ControlMask,  XK_x,             g_prefix_external,    None },
+diff --git a/etc/CONTRIBUTING.md b/etc/CONTRIBUTING.md
+index aa96068..9e47c55 100644
+--- a/etc/CONTRIBUTING.md
++++ b/etc/CONTRIBUTING.md
+@@ -59,6 +59,20 @@ amount of edge cases wrong).
+ [cf]: https://clang.llvm.org/docs/ClangFormat.html#git-integration
+ 
+ 
++AI Policy
++---------
++
++Using LLM ("AI") assistance is allowed within the following criteria:
++
++1. You must be capable of reviewing the changes yourself without any LLM
++   assistance, and personally perform that review before submitting a
++   non-draft pull request.
++2. Do NOT use LLMs to write commit message, issue/pull-request description or
++   comments. These are mediums for humans to communicate with other humans.
++
++Note: The first rule is more relaxed for the `nsxiv-extra` repo.
++
++
+ Development workflow for maintainers
+ ------------------------------------
+ 
+@@ -79,9 +93,6 @@ Our workflow regarding pull requests is the following:
+ 
+ For releases, the process is the following:
+ 
+-  * Tag the release with a "vN" tag, where N is the version number. Also set
+-    the commit message and tag description for the release commit to "Release
+-    version N". Make sure to use an annotated tag.
+   * Update `VERSION` macro in `config.mk`.
+   * Update the changelog (`etc/CHANGELOG.md`):
+     * Include link to the release tarball and add the release date.
+@@ -91,6 +102,11 @@ For releases, the process is the following:
+       release, the "Added" section for new features, and the "Fixes" section
+       for fixed bugs or regressions.
+     * Include pull request IDs with reference style links.
++  * Tag the release with a "vN" tag, where N is the version number. Also set
++    the commit message and tag description for the release commit to "Release
++    version N".
++  * Make sure to use an annotated tag (`-a`).
++  * Remember to push the tag to the remote as well (`git push --tags`).
+ 
+ Mirroring to GitHub:
+ 
+diff --git a/image.c b/image.c
+index 2a16cbd..c1704f0 100644
+--- a/image.c
++++ b/image.c
+@@ -260,7 +260,7 @@ Imlib_Image img_open(const fileinfo_t *file)
+ 	Imlib_Image im = NULL;
+ 	const char *path, *errmsg;
+ 
+-	if ((path = file_realpath(file)) == NULL)
++	if ((path = file_realpath(file, 1)) == NULL)
+ 		return NULL;
+ 
+ 	if (access(path, R_OK) < 0 || stat(path, &st) < 0) {
+diff --git a/main.c b/main.c
+index 65c060c..027d91f 100644
+--- a/main.c
++++ b/main.c
+@@ -122,6 +122,12 @@ static bool xgetline(char **lineptr, size_t *n)
+ 	return len > 0;
+ }
+ 
++static int zoom_to_percent(float zoom)
++{
++	float round = 0.5f;
++	return (int)(zoom * 100.0f + round);
++}
++
+ static int fncmp(const void *a, const void *b)
+ {
+ 	return strcoll(((fileinfo_t *)a)->name, ((fileinfo_t *)b)->name);
+@@ -317,14 +323,14 @@ static void open_title(void)
+ 	char w[12] = "", h[12] = "", z[12] = "", fidx[12], fcnt[12];
+ 	const char *filepath;
+ 
+-	if (wintitle.f.err || (filepath = file_realpath(&files[fileidx])) == NULL)
++	if (wintitle.f.err || (filepath = file_realpath(&files[fileidx], 0)) == NULL)
+ 		return;
+ 
+ 	close_title();
+ 	if (mode == MODE_IMAGE) {
+ 		snprintf(w, ARRLEN(w), "%d", img.w);
+ 		snprintf(h, ARRLEN(h), "%d", img.h);
+-		snprintf(z, ARRLEN(z), "%d", (int)(img.zoom * 100));
++		snprintf(z, ARRLEN(z), "%d", zoom_to_percent(img.zoom));
+ 	}
+ 	snprintf(fidx, ARRLEN(fidx), "%d", fileidx + 1);
+ 	snprintf(fcnt, ARRLEN(fcnt), "%d", filecnt);
+@@ -343,7 +349,7 @@ void open_info(void)
+ 	char *argv[6], w[12] = "", h[12] = "";
+ 	char *cmd = mode == MODE_IMAGE ? info.f.cmd : info.ft.cmd;
+ 	bool ferr = mode == MODE_IMAGE ? info.f.err : info.ft.err;
+-	const char *filepath = file_realpath(&files[fileidx]);
++	const char *filepath = file_realpath(&files[fileidx], 0);
+ 
+ 	if (ferr || info.fd >= 0 || win.bar.h == 0 || filepath == NULL)
+ 		return;
+@@ -401,7 +407,7 @@ void load_image(int new)
+ 	files[new].flags &= ~FF_WARN;
+ 	fileidx = current = new;
+ 
+-	arl_add(&arl, files[fileidx].path);
++	arl_add(&arl, &files[fileidx]);
+ 
+ 	if (img.multi.cnt > 0 && img.multi.animate)
+ 		set_timeout(animate, img.multi.frames[img.multi.sel].delay, true);
+@@ -447,7 +453,7 @@ static void update_info(void)
+ 		appmode_t mode;
+ 	} prev;
+ 
+-	filepath = file_realpath(&files[fileidx]);
++	filepath = file_realpath(&files[fileidx], 0);
+ 	cmp_path = filepath != NULL ? filepath : files[fileidx].name;
+ 
+ 	if (prev.fileidx != fileidx || prev.mode != mode ||
+@@ -496,7 +502,7 @@ static void update_info(void)
+ 			bar_put(r, "B%+d" BAR_SEP, img.brightness);
+ 		if (img.contrast)
+ 			bar_put(r, "C%+d" BAR_SEP, img.contrast);
+-		bar_put(r, "%3d%%" BAR_SEP, (int)(img.zoom * 100.0));
++		bar_put(r, "%3d%%" BAR_SEP, zoom_to_percent(img.zoom));
+ 		if (img.multi.cnt > 0) {
+ 			for (fn = 0, i = img.multi.cnt; i > 0; fn++, i /= 10)
+ 				;
+@@ -658,7 +664,7 @@ static bool run_key_handler(const char *key, unsigned int mask)
+ 	oldst = emalloc(fcnt * sizeof(*oldst));
+ 	for (f = i = 0; f < fcnt; i++) {
+ 		if ((marked && (files[i].flags & FF_MARK)) || (!marked && i == fileidx)) {
+-			const char *filepath = file_realpath(&files[i]);
++			const char *filepath = file_realpath(&files[i], 0);
+ 			if (filepath == NULL)
+ 				filepath = files[i].name;
+ 			if (stat(filepath, &oldst[f]) != 0)
+@@ -673,16 +679,17 @@ static bool run_key_handler(const char *key, unsigned int mask)
+ 
+ 	for (f = i = 0; f < fcnt; i++) {
+ 		if ((marked && (files[i].flags & FF_MARK)) || (!marked && i == fileidx)) {
+-			const char *filepath = file_realpath(&files[i]);
++			const char *filepath = file_realpath(&files[i], 1);
+ 			if (filepath == NULL)
+ 				filepath = files[i].name;
+-			if (stat(filepath, &st) != 0 ||
++			if ((files[i].flags & FF_TN_NEEDS_UPDATE) || stat(filepath, &st) != 0 ||
+ 			    memcmp(&oldst[f].st_mtime, &st.st_mtime, sizeof(st.st_mtime)) != 0)
+ 			{
+ 				if (tns.thumbs != NULL) {
+ 					tns_unload(&tns, i);
+ 					tns.loadnext = MIN(tns.loadnext, i);
+ 				}
++				files[i].flags &= ~FF_TN_NEEDS_UPDATE;
+ 				changed = true;
+ 			}
+ 			f++;
+diff --git a/nsxiv.h b/nsxiv.h
+index e0de301..2207005 100644
+--- a/nsxiv.h
++++ b/nsxiv.h
+@@ -101,7 +101,9 @@ typedef enum {
+ typedef enum {
+ 	FF_WARN    = 1,
+ 	FF_MARK    = 2,
+-	FF_TN_INIT = 4
++	FF_TN_INIT = 4,
++	FF_SYMLINK = 8,
++	FF_TN_NEEDS_UPDATE = 16
+ } fileflags_t;
+ 
+ typedef struct {
+@@ -110,7 +112,7 @@ typedef struct {
+ 	fileflags_t flags;
+ } fileinfo_t;
+ 
+-const char *file_realpath(const fileinfo_t*);
++const char *file_realpath(const fileinfo_t*, bool);
+ 
+ /* timeouts in milliseconds: */
+ enum {
+@@ -136,12 +138,15 @@ struct arl {
+ 	int fd;
+ 	int wd_dir;
+ 	int wd_file;
+-	const char *filename;
++	int wd_link;
++	int wd_link_dir;
++	char *filename;
++	char *linkname;
+ };
+ 
+ void arl_init(arl_t*);
+ void arl_cleanup(arl_t*);
+-void arl_add(arl_t*, const char* /* result of realpath(3) */);
++void arl_add(arl_t*, const fileinfo_t *);
+ bool arl_handle(arl_t*);
+ 
+ 
+@@ -339,6 +344,7 @@ bool tns_move_selection(tns_t*, direction_t, int);
+ bool tns_scroll(tns_t*, direction_t, bool);
+ bool tns_zoom(tns_t*, int);
+ int tns_translate(tns_t*, int, int);
++bool tns_toggle_squared(void);
+ 
+ 
+ /* util.c */
+@@ -362,6 +368,7 @@ void* emalloc(size_t);
+ void* ecalloc(size_t, size_t);
+ void* erealloc(void*, size_t);
+ char* estrdup(const char*);
++char* estrndup(const char*, size_t);
+ void error(int, int, const char*, ...);
+ int r_opendir(r_dir_t*, const char*, bool);
+ int r_closedir(r_dir_t*);
+diff --git a/thumbs.c b/thumbs.c
+index c72c01e..55e7931 100644
+--- a/thumbs.c
++++ b/thumbs.c
+@@ -258,23 +258,37 @@ CLEANUP void tns_free(tns_t *tns)
+ static Imlib_Image tns_scale_down(Imlib_Image im, int dim)
+ {
+ 	int w, h;
+-	float z, zw, zh;
+ 
+ 	imlib_context_set_image(im);
+ 	w = imlib_image_get_width();
+ 	h = imlib_image_get_height();
+-	zw = (float)dim / (float)w;
+-	zh = (float)dim / (float)h;
+-	z = MIN(zw, zh);
+-	z = MIN(z, 1.0);
+-
+-	if (z < 1.0) {
+-		imlib_context_set_anti_alias(1);
+-		im = imlib_create_cropped_scaled_image(0, 0, w, h,
+-		                                       MAX(z * w, 1), MAX(z * h, 1));
+-		if (im == NULL)
+-			error(EXIT_FAILURE, ENOMEM, NULL);
+-		imlib_free_image_and_decache();
++
++	if (SQUARE_THUMBS == false) { /* normal thumbs */
++		float z, zw, zh;
++		zw = (float) dim / (float) w;
++		zh = (float) dim / (float) h;
++		z = MIN(zw, zh);
++		z = MIN(z, 1.0);
++
++		if (z < 1.0) {
++			imlib_context_set_anti_alias(1);
++			im = imlib_create_cropped_scaled_image(0, 0, w, h,
++		 	                                      MAX(z * w, 1), MAX(z * h, 1));
++			if (im == NULL)
++				error(EXIT_FAILURE, ENOMEM, NULL);
++			imlib_free_image_and_decache();
++		}
++	} else { /* generate square thumbs */
++		int x = (w < h) ? 0 : (w - h) / 2;
++		int y = (w > h) ? 0 : (h - w) / 2;
++		int s = (w < h) ? w : h;
++		if (dim < w || dim < h) {
++			imlib_context_set_anti_alias(1);
++			im = imlib_create_cropped_scaled_image(x, y, s, s, dim, dim);
++			if (im == NULL)
++				error(EXIT_FAILURE, ENOMEM, NULL);
++			imlib_free_image_and_decache();
++		}
+ 	}
+ 	return im;
+ }
+@@ -292,7 +306,7 @@ bool tns_load(tns_t *tns, int n, bool force, bool cache_only)
+ 	if (n < 0 || n >= *tns->cnt)
+ 		return false;
+ 	file = &tns->files[n];
+-	if (file->name == NULL || (filepath = file_realpath(file)) == NULL)
++	if (file->name == NULL || (filepath = file_realpath(file, 0)) == NULL)
+ 		return false;
+ 
+ 	t = &tns->thumbs[n];
+@@ -486,7 +500,8 @@ void tns_render(tns_t *tns)
+ 
+ 	for (i = tns->first; i < tns->end; i++) {
+ 		t = &tns->thumbs[i];
+-		if (t->im != NULL) {
++		(void)file_realpath(&tns->files[i], 1);
++		if (t->im != NULL && !(tns->files[i].flags & FF_TN_NEEDS_UPDATE)) {
+ 			t->x = x + (thumb_sizes[tns->zl] - t->w) / 2;
+ 			t->y = y + (thumb_sizes[tns->zl] - t->h) / 2;
+ 			imlib_context_set_image(t->im);
+@@ -494,7 +509,9 @@ void tns_render(tns_t *tns)
+ 			if (tns->files[i].flags & FF_MARK)
+ 				tns_mark(tns, i, true);
+ 		} else {
++			tns_unload(tns, i);
+ 			tns->loadnext = MIN(tns->loadnext, i);
++			tns->files[i].flags &= ~FF_TN_NEEDS_UPDATE;
+ 		}
+ 		if ((i + 1) % tns->cols == 0) {
+ 			x = tns->x;
+@@ -637,3 +654,9 @@ int tns_translate(tns_t *tns, int x, int y)
+ 
+ 	return n;
+ }
++
++bool tns_toggle_squared(void)
++{
++	SQUARE_THUMBS = !SQUARE_THUMBS;
++	return true;
++}
+diff --git a/util.c b/util.c
+index c520c04..7ed9a91 100644
+--- a/util.c
++++ b/util.c
+@@ -22,6 +22,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#include <signal.h>
+ #include <spawn.h>
+ #include <stdarg.h>
+ #include <stdio.h>
+@@ -67,6 +68,14 @@ char *estrdup(const char *s)
+ 	return memcpy(emalloc(n), s, n);
+ }
+ 
++char *estrndup(const char *s, size_t n)
++{
++	char *ptr = strndup(s, n);
++	if (ptr == NULL)
++		error(EXIT_FAILURE, errno, NULL);
++	return ptr;
++}
++
+ void error(int eval, int err, const char *fmt, ...)
+ {
+ 	va_list ap;
+@@ -88,15 +97,39 @@ void error(int eval, int err, const char *fmt, ...)
+ 		exit(eval);
+ }
+ 
+-const char *file_realpath(const fileinfo_t *file)
++const char *file_realpath(const fileinfo_t *file, bool invalidate_symlinks)
+ {
++	bool use_cached, need_refresh = false;
++	fileinfo_t *mutable = (fileinfo_t *)file; /* avoids cast on caller's side */
++
+ 	assert(file != NULL);
+-	if (file->path == NULL) {
+-		fileinfo_t *mutable = (fileinfo_t *)file; /* avoids cast on caller's side */
+-		if ((mutable->path = realpath(file->name, NULL)) == NULL) {
++
++	use_cached = file->path != NULL && !invalidate_symlinks;
++	if (!use_cached) {
++		struct stat lst;
++		bool was_symlink = file->flags & FF_SYMLINK;
++		if (lstat(file->name, &lst) == 0 && S_ISLNK(lst.st_mode))
++			mutable->flags |= FF_SYMLINK;
++		else
++			mutable->flags &= ~FF_SYMLINK;
++		need_refresh = file->path == NULL ||
++		               (invalidate_symlinks && (was_symlink || (file->flags & FF_SYMLINK)));
++	}
++	if (need_refresh) {
++		char *newpath = realpath(file->name, NULL);
++		if (newpath == NULL) {
+ 			if (file->flags & FF_WARN)
+ 				error(0, errno, "%s", file->name);
+ 		}
++		if (newpath == NULL || file->path == NULL || !STREQ(newpath, file->path)) {
++			if (invalidate_symlinks && file->path != NULL) {
++				mutable->flags |= FF_TN_NEEDS_UPDATE;
++			}
++			free((void *)mutable->path);
++			mutable->path = newpath;
++		} else {
++			free(newpath);
++		}
+ 	}
+ 	return file->path;
+ }
+@@ -263,20 +296,28 @@ pid_t spawn(int *readfd, int *writefd, int pipeflags, char *const argv[])
+ 	const char *cmd;
+ 	int pfd_read[2] = {-1, -1}, pfd_write[2] = {-1, -1};
+ 	int err = 0;
+-	bool fa_initialized = false;
++	bool fa_initialized = false, attr_initialized = false;
+ 	posix_spawn_file_actions_t fa;
++	sigset_t sigset;
++	posix_spawnattr_t attr;
+ 
+ 	assert(argv != NULL && argv[0] != NULL);
+ 	cmd = argv[0];
+ 
+ 	fa_initialized = !err && (err = posix_spawn_file_actions_init(&fa)) == 0;
++	if (!err && !(err = posix_spawnattr_init(&attr))) {
++		attr_initialized = true;
++		sigfillset(&sigset);
++		err = posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETSIGDEF);
++		err = err ? err : posix_spawnattr_setsigdefault(&attr, &sigset);
++	}
+ 
+ 	if (!err && readfd != NULL)
+ 		err = mkspawn_pipe(&fa, cmd, pfd_read, 1, pipeflags);
+ 	if (!err && writefd != NULL)
+ 		err = mkspawn_pipe(&fa, cmd, pfd_write, 0, pipeflags);
+ 
+-	err = err ? err : posix_spawnp(&pid, cmd, &fa, NULL, argv, environ);
++	err = err ? err : posix_spawnp(&pid, cmd, &fa, &attr, argv, environ);
+ 
+ 	if (pfd_read[0] >= 0) {
+ 		*readfd = err ? (close(pfd_read[0]), -1) : pfd_read[0];
+@@ -286,6 +327,8 @@ pid_t spawn(int *readfd, int *writefd, int pipeflags, char *const argv[])
+ 		close(pfd_write[0]);
+ 		*writefd = err ? (close(pfd_write[1]), -1) : pfd_write[1];
+ 	}
++	if (attr_initialized)
++		posix_spawnattr_destroy(&attr);
+ 	if (fa_initialized)
+ 		posix_spawn_file_actions_destroy(&fa);
+ 
