@@ -145,7 +145,7 @@ in
     (pkgs.python3.withPackages (python-pkgs: with python-pkgs; [
       requests
     ]))
-    imv
+    qimgv
     nsxiv
     gpu-screen-recorder
     waylock
@@ -154,6 +154,9 @@ in
     cava
     iniparser
     fftw
+    wl-clipboard
+    killall
+    slurp
   ];
 
   environment.variables = {
