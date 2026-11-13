@@ -187,7 +187,7 @@ index 4e694f0..4de6b4d 100644
  #endif /* _MAPPINGS_CONFIG */
  #endif /* COMMANDS_H */
 diff --git a/config.def.h b/config.def.h
-index ead1509..2249ee8 100644
+index ead1509..7f865e2 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -7,12 +7,12 @@ static const int WIN_HEIGHT = 600;
@@ -197,14 +197,14 @@ index ead1509..2249ee8 100644
 -static const char *WIN_BG[]   = { "Nsxiv.window.background",   "white" };
 -static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "black" };
 -static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",      NULL };
-+static const char *WIN_BG[]   = { "Nsxiv.window.background",   "#12282F" };
-+static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "#B1DFA6" };
-+static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",     "#D4B071" };
++static const char *WIN_BG[]   = { "Nsxiv.window.background",   "#FBF1C7" };
++static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "#282828" };
++static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",     "#CC2412" };
  #if HAVE_LIBFONTS
 -static const char *BAR_BG[]   = { "Nsxiv.bar.background",       NULL };
 -static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",       NULL };
-+static const char *BAR_BG[]   = { "Nsxiv.bar.background",      "#5A8F78" };
-+static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",      "#E8E6C8" };
++static const char *BAR_BG[]   = { "Nsxiv.bar.background",      "#282828" };
++static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",      "#FBF1C7" };
  static const char *BAR_FONT[] = { "Nsxiv.bar.font",            "monospace-8" };
  
  /* if true, statusbar appears on top of the window */

@@ -53,6 +53,7 @@ in
   };
 
   # systemd slop
+  services.gnome.gnome-keyring.enable = true;
   services.flatpak.enable = true;
   services.displayManager.ly = {
     enable = true;
@@ -118,6 +119,7 @@ in
   	gowall
   	yazi
   	adw-gtk3
+    gruvbox-dark-gtk
   	bat
   	cowsay
   	cbonsai
@@ -157,6 +159,11 @@ in
     wl-clipboard
     killall
     slurp
+    fetch
+    gnome-keyring
+    libsecret
+    libnotify
+    jq
   ];
 
   environment.variables = {
