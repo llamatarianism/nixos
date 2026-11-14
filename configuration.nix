@@ -143,7 +143,7 @@ in
     wlogout
     btop
     mako
-    inputs.waybar.packages.${pkgs.stdenv.hostPlatform.system}.default
+    waybar
     swaybg
     (pkgs.python3.withPackages (python-pkgs: with python-pkgs; [
       requests
