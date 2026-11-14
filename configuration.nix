@@ -119,7 +119,8 @@ in
   	gowall
   	yazi
   	adw-gtk3
-    gruvbox-dark-gtk
+    gruvbox-gtk-theme
+    morewaita-icon-theme
   	bat
   	cowsay
   	cbonsai
@@ -164,6 +165,9 @@ in
     libsecret
     libnotify
     jq
+    rbw
+    protonmail-desktop
+    vlc
   ];
 
   environment.variables = {
