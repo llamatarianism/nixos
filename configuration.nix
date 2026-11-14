@@ -40,7 +40,6 @@ in
       xdg-desktop-portal-gtk
     ];
   };
-  programs.dwl.enable = true;
 
   hardware.graphics = {
     enable = true;
