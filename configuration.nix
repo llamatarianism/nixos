@@ -86,14 +86,11 @@ in
     firefox
     kitty
     neovim
-    fastfetch
     inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
     stow
-    zig
     pam
     libc
     fish
-    flatpak
     discord
     zip
     unzip
@@ -130,7 +127,6 @@ in
     xdg-desktop-portal
     xdg-desktop-portal-gtk
     xdg-desktop-portal-wlr
-    autotiling
     fuzzel
     wlogout
     btop
@@ -158,11 +154,11 @@ in
     libsecret
     libnotify
     jq
-    rbw
     protonmail-desktop
     vlc
     nordend
     steam
+    foot
   ];
 
   environment.variables = {
