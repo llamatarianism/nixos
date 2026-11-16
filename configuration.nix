@@ -162,6 +162,7 @@ in
     rbw
     protonmail-desktop
     vlc
+    nordend
   ];
 
   environment.variables = {

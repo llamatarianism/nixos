@@ -5,6 +5,7 @@
     noctalia.url   = "github:noctalia-dev/noctalia/cachix";
     limusic.url    = "github:arch-fan/nur-packages";
     microfetch.url = "github:NotAShelf/microfetch/543a1597baf680762bdf72e33efe1e267ad6a847";
+    nordend.url    = "github:pankaspe/nordend-fm";
   };
 
   outputs = { self, nixpkgs, ...  }@inputs: {
