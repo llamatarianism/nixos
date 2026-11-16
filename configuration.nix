@@ -145,7 +145,7 @@ in
     qimgv
     nsxiv
     gpu-screen-recorder
-    waylock
+    swaylock
     (pywal16.override { withColorz = true; withColorthief = true; withFastColorthief = true; withHaishoku = true; withModernColorthief = true; })
     terminal-rain-lightning
     cava

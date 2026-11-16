@@ -97,6 +97,22 @@
     },
     "nixpkgs_5": {
       "locked": {
+        "lastModified": 1794386569,
+        "narHash": "sha256-x9sADJvoVG0L6RejZB+/BB4YiGZFBZrfTlhF4uBq1tQ=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d4f25a3e562008648d45bcf2d70bcc7422cad84e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_6": {
+      "locked": {
         "lastModified": 1793876309,
         "narHash": "sha256-Q62pssAT9r01POiSyXW0IPXBWhntiKqMhzlsp3bsl5I=",
         "rev": "f9a75f41be3a74eab55d3a7679d34ad6cc0da977",
@@ -127,18 +143,37 @@
         "type": "github"
       }
     },
+    "nordend": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_5"
+      },
+      "locked": {
+        "lastModified": 1794779732,
+        "narHash": "sha256-f3Zf5sgfqbpp+QbXi82tTCJlliP+3V4mMqwBhMy9bm0=",
+        "owner": "pankaspe",
+        "repo": "nordend-fm",
+        "rev": "49222bb33fa70dc82168873c130c7e9ba5dd39ed",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pankaspe",
+        "repo": "nordend-fm",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "limusic": "limusic",
         "microfetch": "microfetch",
         "nixpkgs": "nixpkgs_3",
         "noctalia": "noctalia",
+        "nordend": "nordend",
         "umbriel": "umbriel"
       }
     },
     "umbriel": {
       "inputs": {
-        "nixpkgs": "nixpkgs_5",
+        "nixpkgs": "nixpkgs_6",
         "xdg-desktop-portal-umbriel": "xdg-desktop-portal-umbriel"
       },
       "locked": {
