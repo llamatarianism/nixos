@@ -28,10 +28,6 @@ in
   };
   
   programs.umbriel.enable = true;
-  programs.sway = {
-    enable = true;
-    wrapperFeatures.gtk = true;
-  };
   xdg.portal = {
     enable = true;
     xdgOpenUsePortal = true;
@@ -133,7 +129,6 @@ in
     fzf
     gimp
     cmatrix
-    sway
     xdg-desktop-portal
     xdg-desktop-portal-gtk
     xdg-desktop-portal-wlr
