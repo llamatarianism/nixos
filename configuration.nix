@@ -18,6 +18,7 @@ in
   ];
   
   boot = {
+    kernelModules = [ "uinput" ];
     plymouth = {
       enable = true;
       theme = "solar";
@@ -44,11 +45,16 @@ in
     enable32Bit = true;
     extraPackages = with pkgs; [ intel-media-driver linux-firmware ];
   };
+  hardware.uinput.enable = true;
 
   programs.gpu-screen-recorder = {
     enable = true;
     ui.enable = true;
   };
+
+  services.udev.extraRules = ''
+    KERNEL=="uinput", GROUP="input", TAG+="uaccess"
+  '';
 
   # systemd slop
   services.gnome.gnome-keyring.enable = true;
@@ -64,21 +70,6 @@ in
   };
   
   services.dbus.enable = true;
-  services.keyd = {
-    enable = true;
-    keyboards.default = {
-      ids = [ "*" ];
-      settings.main = {
-        altgr = "left";
-        rightcontrol = "right";
-      };
-    };
-  };
-
-  systemd.sockets.keyd.socketConfig = {
-    SocketUser = "lune";
-    SocketGroup = "keyd";
-  };
 
   environment.systemPackages = with pkgs; [
     linux-firmware
@@ -112,7 +103,6 @@ in
     bitwarden-cli
     bitwarden-desktop
     nwg-look
-    keyd
     ly
     pavucontrol
     playerctl
@@ -154,7 +144,7 @@ in
     nsxiv
     gpu-screen-recorder
     swaylock
-    (pywal16.override { withColorz = true; withColorthief = true; withFastColorthief = true; withHaishoku = true; withModernColorthief = true; })
+    (pywal16.override { withColorz = true; withHaishoku = true; })
     terminal-rain-lightning
     cava
     iniparser
@@ -217,7 +207,7 @@ in
   users.users."lune" = {
     isNormalUser = true;
     description = "lune";
-    extraGroups = [ "networkmanager" "wheel" "input" "keyd" ];
+    extraGroups = [ "networkmanager" "wheel" "input" ];
     packages = with pkgs; [];
     shell = pkgs.fish;
   };
