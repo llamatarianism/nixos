@@ -37,8 +37,11 @@ in
     ];
   };
 
+  programs.steam.enable = true;
+
   hardware.graphics = {
     enable = true;
+    enable32Bit = true;
     extraPackages = with pkgs; [ intel-media-driver linux-firmware ];
   };
 
@@ -70,6 +73,11 @@ in
         rightcontrol = "right";
       };
     };
+  };
+
+  systemd.sockets.keyd.socketConfig = {
+    SocketUser = "lune";
+    SocketGroup = "keyd";
   };
 
   environment.systemPackages = with pkgs; [
@@ -153,6 +161,7 @@ in
     fftw
     wl-clipboard
     killall
+    grim
     slurp
     fetch
     gnome-keyring
@@ -163,6 +172,7 @@ in
     protonmail-desktop
     vlc
     nordend
+    steam
   ];
 
   environment.variables = {
@@ -207,7 +217,7 @@ in
   users.users."lune" = {
     isNormalUser = true;
     description = "lune";
-    extraGroups = [ "networkmanager" "wheel" "input" ];
+    extraGroups = [ "networkmanager" "wheel" "input" "keyd" ];
     packages = with pkgs; [];
     shell = pkgs.fish;
   };
