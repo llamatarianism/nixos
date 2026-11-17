@@ -26,7 +26,7 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             extraSpecialArgs = { inherit inputs; };
-            users.lune = ./home.nix;
+            users.lune = ./home;
             backupFileExtension = "bak";
           };
         }
