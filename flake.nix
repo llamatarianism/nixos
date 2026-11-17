@@ -1,6 +1,10 @@
 {
   inputs = {
     nixpkgs.url    = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
+    home-manager   = {
+      url = "github:nix-community/home-manager/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     umbriel.url    = "github:noctalia-dev/umbriel/cachix";
     noctalia.url   = "github:noctalia-dev/noctalia/cachix";
     limusic.url    = "github:arch-fan/nur-packages";
@@ -16,6 +20,15 @@
 	      ./configuration.nix
         ./sysmodules
         inputs.xremap.nixosModules.default
+        home-manager.nixosModules.default
+        {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            extraSpecialArgs = { inherit inputs; };
+            users.lune = ./home.nix;
+          };
+        }
 	    ];
     };
   };
