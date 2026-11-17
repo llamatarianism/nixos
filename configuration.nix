@@ -1,9 +1,5 @@
 { config, pkgs, inputs, ... }:
 
-let
-  bg = "0B1824";
-  fg = "FFFFFF";
-in
 {
   imports =
     [
@@ -52,123 +48,7 @@ in
     ui.enable = true;
   };
 
-  services.udev.extraRules = ''
-    KERNEL=="uinput", GROUP="input", TAG+="uaccess"
-  '';
 
-  # systemd slop
-  services.gnome.gnome-keyring.enable = true;
-  services.flatpak.enable = true;
-  services.displayManager.ly = {
-    enable = true;
-	  settings = { bigclock = "en"; };
-  };
-  systemd.services.display-manager = {
-     serviceConfig = {
-	    ExecStartPre = "${pkgs.coreutils}/bin/printf '%%b' '\\e]P0${bg}\\e]P7${fg}\\ec'";
-	  };
-  };
-  systemd.user.services.xremap = {
-    after = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
-  };
-  
-  services.dbus.enable = true;
-
-  environment.systemPackages = with pkgs; [
-    linux-firmware
-    linuxHeaders
-    intel-media-driver
-    libva
-    libva-utils
-    mesa
-    openh264
-    vim
-    wget
-    git
-	  gcc
-    firefox
-    kitty
-    neovim
-    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
-    stow
-    pam
-    libc
-    fish
-    discord
-    zip
-    unzip
-    nix-search-cli
-    microfetch
-    bibata-cursors
-    bitwarden-cli
-    bitwarden-desktop
-    nwg-look
-    ly
-    pavucontrol
-    playerctl
-  	lavat
-  	ffmpeg
-  	imagemagick
-  	gowall
-  	yazi
-  	adw-gtk3
-    gruvbox-gtk-theme
-    morewaita-icon-theme
-  	bat
-  	cowsay
-  	cbonsai
-  	astroterm
-  	pipes
-  	asciiquarium
-  	peaclock
-  	nh
-  	inputs.limusic.packages.${pkgs.stdenv.hostPlatform.system}.limusic
-  	tree-sitter
-    fzf
-    gimp
-    cmatrix
-    xdg-desktop-portal
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-wlr
-    fuzzel
-    wlogout
-    btop
-    mako
-    waybar
-    swaybg
-    (pkgs.python3.withPackages (python-pkgs: with python-pkgs; [
-      requests
-    ]))
-    qimgv
-    nsxiv
-    gpu-screen-recorder
-    swaylock
-    (pywal16.override { withColorz = true; withHaishoku = true; })
-    terminal-rain-lightning
-    cava
-    iniparser
-    fftw
-    wl-clipboard
-    killall
-    grim
-    slurp
-    fetch
-    gnome-keyring
-    libsecret
-    libnotify
-    jq
-    protonmail-desktop
-    vlc
-    nordend
-    steam
-    foot
-  ];
-
-  environment.variables = {
-    XCURSOR_THEME = "Bibata-Modern-Classic";
-    XCURSOR_SIZE = "24";
-  };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings = {
@@ -195,10 +75,6 @@ in
     LC_TIME = "en_GB.UTF-8";
   };
 
-  services.xserver.xkb = {
-    layout = "gb";
-    variant = "";
-  };
 
   console.keyMap = "uk";
   
@@ -215,37 +91,6 @@ in
   nixpkgs.config.allowUnfree = true;
 
 
-  fonts = {
-    packages = with pkgs; [
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-cjk-serif
-      noto-fonts-color-emoji
-      nerd-fonts.sauce-code-pro
-	    cantarell-fonts
-      redhat-official-fonts
-      inconsolata
-      font-awesome
-	];
-
-  	fontconfig = {
-      enable = true;
-  	  defaultFonts = {
-        emoji = [ "Noto Color Emoji" ];
-        monospace = [ "Sometype Mono" "SauceCodePro Nerd Font Propo" ];
-        sansSerif = [ "Cantarell" "Noto Sans" ];
-        serif = [ "Noto Serif CJK JP" ];
-      };
-      useEmbeddedBitmaps = true;
-
-      hinting = {
-        enable = true;
-        style = "full";
-      };
-
-      subpixel.rgba = "rgb";
-  	};
-  };
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.

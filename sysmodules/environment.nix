@@ -88,6 +88,7 @@
     nordend
     steam
     foot
+    tree
   ];
 
   environment.variables = {
