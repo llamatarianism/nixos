@@ -68,6 +68,10 @@ in
 	    ExecStartPre = "${pkgs.coreutils}/bin/printf '%%b' '\\e]P0${bg}\\e]P7${fg}\\ec'";
 	  };
   };
+  systemd.user.services.xremap = {
+    after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+  };
   
   services.dbus.enable = true;
 

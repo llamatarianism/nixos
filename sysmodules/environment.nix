@@ -1,0 +1,97 @@
+{ config, pkgs, inputs, ... }:
+{
+  environment.systemPackages = with pkgs; [
+    linux-firmware
+    linuxHeaders
+    intel-media-driver
+    libva
+    libva-utils
+    mesa
+    openh264
+    vim
+    wget
+    git
+	  gcc
+    firefox
+    kitty
+    neovim
+    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+    stow
+    pam
+    libc
+    fish
+    discord
+    zip
+    unzip
+    nix-search-cli
+    microfetch
+    bibata-cursors
+    bitwarden-cli
+    bitwarden-desktop
+    nwg-look
+    ly
+    pavucontrol
+    playerctl
+  	lavat
+  	ffmpeg
+  	imagemagick
+  	gowall
+  	yazi
+  	adw-gtk3
+    gruvbox-gtk-theme
+    morewaita-icon-theme
+  	bat
+  	cowsay
+  	cbonsai
+  	astroterm
+  	pipes
+  	asciiquarium
+  	peaclock
+  	nh
+  	inputs.limusic.packages.${pkgs.stdenv.hostPlatform.system}.limusic
+  	tree-sitter
+    fzf
+    gimp
+    cmatrix
+    xdg-desktop-portal
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-wlr
+    fuzzel
+    wlogout
+    btop
+    mako
+    waybar
+    swaybg
+    (pkgs.python3.withPackages (python-pkgs: with python-pkgs; [
+      requests
+    ]))
+    qimgv
+    nsxiv
+    gpu-screen-recorder
+    swaylock
+    (pywal16.override { withColorz = true; withHaishoku = true; })
+    terminal-rain-lightning
+    cava
+    iniparser
+    fftw
+    wl-clipboard
+    killall
+    grim
+    slurp
+    fetch
+    gnome-keyring
+    libsecret
+    libnotify
+    jq
+    protonmail-desktop
+    vlc
+    nordend
+    steam
+    foot
+  ];
+
+  environment.variables = {
+    XCURSOR_THEME = "Bibata-Modern-Classic";
+    XCURSOR_SIZE = "24";
+  };
+}

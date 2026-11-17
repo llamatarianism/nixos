@@ -1,6 +1,9 @@
 {
+  systemd.user.services.xremap = {
+    after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+  };
   services.xremap.withWlroots = true;
-  
   services.xremap = {
     enable = true;
     serviceMode = "user";

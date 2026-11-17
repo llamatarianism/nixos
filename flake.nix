@@ -14,9 +14,8 @@
       specialArgs = { inherit inputs; };
       modules = [
 	      ./configuration.nix
-		    ./overlays.nix
+        ./sysmodules
         inputs.xremap.nixosModules.default
-        ./xremap.nix
 	    ];
     };
   };
