@@ -14,7 +14,6 @@
 	  gcc
     firefox
     kitty
-    neovim
     inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
     stow
     pam

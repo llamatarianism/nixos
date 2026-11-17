@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url    = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
     home-manager   = {
-      url = "github:nix-community/home-manager/release-26.05";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     umbriel.url    = "github:noctalia-dev/umbriel/cachix";
@@ -13,7 +13,7 @@
     xremap.url     = "github:xremap/nix-flake";
   };
 
-  outputs = { self, nixpkgs, ...  }@inputs: {
+  outputs = { self, nixpkgs, home-manager, ...  }@inputs: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [
@@ -27,6 +27,7 @@
             useUserPackages = true;
             extraSpecialArgs = { inherit inputs; };
             users.lune = ./home.nix;
+            backupFileExtension = "bak";
           };
         }
 	    ];

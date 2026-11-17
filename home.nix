@@ -1,4 +1,5 @@
 { config, pkgs, inputs, ... }:
 {
-  home.stateVersion = "26.05";
+  imports = [ ./neovim.nix ];
+  home.stateVersion = "26.11";
 }
