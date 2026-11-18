@@ -18,7 +18,7 @@
       specialArgs = { inherit inputs; };
       modules = [
 	      ./configuration.nix
-        ./sysmodules
+        ./sys
         inputs.xremap.nixosModules.default
         home-manager.nixosModules.default
         {
