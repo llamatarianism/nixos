@@ -1,6 +1,4 @@
 {
-  programs.umbriel.enable = true;
-
   programs.steam.enable = true;
 
   programs.fish.enable = true;

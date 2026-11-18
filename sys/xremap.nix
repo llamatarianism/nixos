@@ -1,4 +1,7 @@
+{ inputs, ... }:
 {
+  imports = [ inputs.xremap.nixosModules.default ];
+
   systemd.user.services.xremap = {
     wantedBy = [ "graphical.target" ];
     unitConfig.After = [ "graphical.target" ];
