@@ -1,7 +1,7 @@
 {
   systemd.user.services.xremap = {
-    after = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
+    wantedBy = [ "graphical.target" ];
+    unitConfig.After = [ "graphical.target" ];
   };
   services.xremap.withWlroots = true;
   services.xremap = {

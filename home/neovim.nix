@@ -80,7 +80,7 @@
       vim.keymap.set('n', '<leader>q', '<CMD>lua require("FTerm").toggle()<CR>')
 
       vim.api.nvim_create_autocmd('Filetype', {
-        pattern = { 'lua', 'nix' },
+        pattern = { 'lua', 'nix', 'toml' },
         callback = function()
           vim.treesitter.start()
 	      end

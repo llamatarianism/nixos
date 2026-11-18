@@ -4,7 +4,6 @@
   imports =
     [
       ./hardware-configuration.nix
-      inputs.umbriel.nixosModules.default
     ];
 
   nix.nixPath = [
@@ -24,7 +23,6 @@
     kernelParams = [ "quiet" "rd.udev.log_level=3" "rd.systemd.show_status=auto" ];
   };
   
-  programs.umbriel.enable = true;
   xdg.portal = {
     enable = true;
     xdgOpenUsePortal = true;
