@@ -7,5 +7,6 @@
     ./font.nix
     ./services.nix
     ./xdg.nix
+    ./umbriel.nix
   ];
 }
