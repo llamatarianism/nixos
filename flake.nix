@@ -28,7 +28,7 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             extraSpecialArgs = { inherit inputs; };
-            users.lune = ./home;
+            users.lune = { imports = importTree ./home; };
             backupFileExtension = "bak";
           };
         }
