@@ -13,11 +13,15 @@
     xremap.url     = "github:xremap/nix-flake";
   };
 
-  outputs = { self, nixpkgs, home-manager, ...  }@inputs: {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+  outputs = { self, nixpkgs, home-manager, ...  }@inputs:
+  let
+    lib = nixpkgs.lib;
+    importTree = import ./import-tree.nix { inherit lib; };
+  in
+  {
+    nixosConfigurations.nixos = lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [
-        ./sys
         home-manager.nixosModules.default
         {
           home-manager = {
@@ -28,7 +32,7 @@
             backupFileExtension = "bak";
           };
         }
-	    ];
+	    ] ++ importTree ./sys;
     };
   };
 }
