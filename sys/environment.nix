@@ -39,7 +39,6 @@
   	adw-gtk3
     gruvbox-gtk-theme
     morewaita-icon-theme
-  	bat
   	cowsay
   	cbonsai
   	astroterm
