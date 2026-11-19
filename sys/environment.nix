@@ -13,7 +13,6 @@
     git
 	  gcc
     firefox
-    kitty
     stow
     pam
     libc
@@ -22,15 +21,12 @@
     zip
     unzip
     nix-search-cli
-    microfetch
     bibata-cursors
     bitwarden-cli
     bitwarden-desktop
-    nwg-look
     ly
     pavucontrol
     playerctl
-  	lavat
   	ffmpeg
   	imagemagick
   	gowall
@@ -38,12 +34,6 @@
   	adw-gtk3
     gruvbox-gtk-theme
     morewaita-icon-theme
-  	cowsay
-  	cbonsai
-  	astroterm
-  	pipes
-  	asciiquarium
-  	peaclock
   	nh
   	inputs.limusic.packages.${pkgs.stdenv.hostPlatform.system}.limusic
   	tree-sitter
@@ -54,31 +44,19 @@
     xdg-desktop-portal-gtk
     xdg-desktop-portal-wlr
     fuzzel
-    wlogout
     btop
-    mako
-    waybar
-    swaybg
     (pkgs.python3.withPackages (python-pkgs: with python-pkgs; [
       requests
     ]))
     qimgv
-    nsxiv
     gpu-screen-recorder
     swaylock
     (pywal16.override { withColorz = true; withHaishoku = true; })
-    terminal-rain-lightning
-    cava
     iniparser
     fftw
-    wl-clipboard
     killall
-    grim
-    slurp
-    fetch
     gnome-keyring
     libsecret
-    libnotify
     jq
     protonmail-desktop
     vlc

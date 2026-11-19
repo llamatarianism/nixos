@@ -35,7 +35,7 @@
           environment.systemPackages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.my-neovim ];
         })
         inputs.hjem.nixosModules.default
-        ./hjem/hjem.nix
+        ./hjem
 	    ] ++ importTree ./sys;
     };
   };
