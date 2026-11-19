@@ -24,4 +24,6 @@ in
     layout = "gb";
     variant = "";
   };
+
+  services.gnome.gnome-keyring.enable = true;
 }

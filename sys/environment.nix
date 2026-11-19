@@ -1,21 +1,12 @@
 { config, pkgs, inputs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    linux-firmware
-    linuxHeaders
-    intel-media-driver
-    libva
     libva-utils
-    mesa
-    openh264
     vim
     wget
     git
-	  gcc
     firefox
     stow
-    pam
-    libc
     fish
     discord
     zip
@@ -24,7 +15,6 @@
     bibata-cursors
     bitwarden-cli
     bitwarden-desktop
-    ly
     pavucontrol
     playerctl
   	ffmpeg
@@ -40,9 +30,6 @@
     fzf
     gimp
     cmatrix
-    xdg-desktop-portal
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-wlr
     fuzzel
     btop
     (pkgs.python3.withPackages (python-pkgs: with python-pkgs; [
@@ -50,18 +37,13 @@
     ]))
     qimgv
     gpu-screen-recorder
-    swaylock
     (pywal16.override { withColorz = true; withHaishoku = true; })
-    iniparser
-    fftw
     killall
     gnome-keyring
-    libsecret
     jq
     protonmail-desktop
     vlc
     nordend
-    steam
     foot
     tree
     bat
