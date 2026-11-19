@@ -1,6 +1,23 @@
+{ pkgs, ... }:
 {
   vim = {
-    globals.mapleader = " ";
+    extraPlugins = with pkgs.vimPlugins; {
+      fterm = {
+        package = FTerm-nvim;
+        setup = "require('FTerm').setup({ border = 'rounded', })";
+      };
+      gruvbox-material = {
+        package = gruvbox-material;
+        setup = "vim.cmd(\"colorscheme gruvbox-material\")";
+      };
+    };
+
+    globals = {
+      mapLeader = " ";
+      gruvbox_material_better_performance = 1;
+      gruvbox_material_background = "hard";
+      gruvbox_material_foreground = "mix";
+    };
 
     opts = {
       termguicolors = true;
@@ -12,7 +29,10 @@
     };
     
     ui.nvim-highlight-colors.enable = true;
-    filetree.nvimTree.enable        = true;
+    filetree.nvimTree = {
+      enable = true;
+      openOnSetup = false;
+    };
     statusline.lualine.enable       = true;
     treesitter.enable               = true;
     autopairs.nvim-autopairs.enable = true;
@@ -24,11 +44,16 @@
         silent = true;
         action = ":NvimTreeToggle<CR>";
       }
+      {
+        key = "<leader>q";
+        mode = "n";
+        silent = true;
+        action = "<CMD>lua require('FTerm').toggle()<CR>";
+      }
     ];
 
     theme = {
       enable = true;
-      name = "gruvbox";
       style = "dark";
     };
   };
