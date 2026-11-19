@@ -1,23 +1,18 @@
 {
   inputs = {
     nixpkgs.url    = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
-    home-manager   = {
-      url = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hjem           = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    umbriel.url    = "github:noctalia-dev/umbriel/cachix";
-    noctalia.url   = "github:noctalia-dev/noctalia/cachix";
-    limusic.url    = "github:arch-fan/nur-packages";
-    microfetch.url = "github:notashelf/microfetch/543a1597baf680762bdf72e33efe1e267ad6a847";
-    nordend.url    = "github:pankaspe/nordend-fm";
     nvf            = {
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    microfetch.url = "github:notashelf/microfetch/543a1597baf680762bdf72e33efe1e267ad6a847";
+    umbriel.url    = "github:noctalia-dev/umbriel/cachix";
+    limusic.url    = "github:arch-fan/nur-packages";
+    nordend.url    = "github:pankaspe/nordend-fm";
     xremap.url     = "github:xremap/nix-flake";
   };
 
@@ -41,16 +36,6 @@
         })
         inputs.hjem.nixosModules.default
         ./hjem/hjem.nix
-        home-manager.nixosModules.default
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            extraSpecialArgs = { inherit inputs; };
-            users.lune = { imports = importTree ./home; };
-            backupFileExtension = "bak";
-          };
-        }
 	    ] ++ importTree ./sys;
     };
   };

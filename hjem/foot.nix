@@ -1,10 +1,11 @@
+{ lib, ... }:
 {
-  programs.foot = {
-    enable = true;
+  hjem.users.lune.files."config/foot/foot.ini" = {
+    generator = lib.generators.toINI {};
+      value = {
 
-    settings = {
       main = {
-        font = "Sometype Mono:size=14";
+        font = "Sometype Mono:size=16";
       };
 
       colors-dark = {
