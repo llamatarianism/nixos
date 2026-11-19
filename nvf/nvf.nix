@@ -28,14 +28,21 @@
       clipboard = "unnamedplus";
     };
     
-    ui.nvim-highlight-colors.enable = true;
     filetree.nvimTree = {
       enable = true;
       openOnSetup = false;
     };
+    ui.nvim-highlight-colors.enable = true;
     statusline.lualine.enable       = true;
-    treesitter.enable               = true;
     autopairs.nvim-autopairs.enable = true;
+
+    languages = {
+      nix.enable = true;
+      lua.enable = true;
+      toml.enable = true;
+    };
+
+    lineNumberMode = "number";
    
     keymaps = [
       {
