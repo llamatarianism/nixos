@@ -49,6 +49,26 @@
         "type": "github"
       }
     },
+    "hjem": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795054265,
+        "narHash": "sha256-IjFbnKzAkaG+tiZxwpP5CfTYVNxKKYSMioLynWAaGd0=",
+        "owner": "feel-co",
+        "repo": "hjem",
+        "rev": "2a28f37d253ea3866f85eabe482c68a84fc32ed5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "feel-co",
+        "repo": "hjem",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -301,6 +321,7 @@
     },
     "root": {
       "inputs": {
+        "hjem": "hjem",
         "home-manager": "home-manager",
         "limusic": "limusic",
         "microfetch": "microfetch",

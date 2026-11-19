@@ -5,6 +5,10 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hjem           = {
+      url = "github:feel-co/hjem";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     umbriel.url    = "github:noctalia-dev/umbriel/cachix";
     noctalia.url   = "github:noctalia-dev/noctalia/cachix";
     limusic.url    = "github:arch-fan/nur-packages";
@@ -35,6 +39,8 @@
         ({pkgs, ...}: {
           environment.systemPackages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.my-neovim ];
         })
+        inputs.hjem.nixosModules.default
+        ./hjem/hjem.nix
         home-manager.nixosModules.default
         {
           home-manager = {
