@@ -33,13 +33,37 @@
       openOnSetup = false;
     };
     ui.nvim-highlight-colors.enable = true;
-    statusline.lualine.enable       = true;
     autopairs.nvim-autopairs.enable = true;
-
+    
+    visuals.nvim-web-devicons.enable = true;
+    visuals.nvim-web-devicons.setupOpts.color_icons = false;
+    statusline.lualine = {
+      enable = true;
+      setupOpts.sections = {
+        lualine_a = [
+          {
+            "@1" = "mode";
+            icons_enabled = true;
+            separator = {
+              left = "";
+              right = "";
+            };
+          }
+        ];
+        lualine_x = [ "" ]; # disable LSP indicator
+      };
+    };
+    
+    treesitter = {
+      enable = true;
+      highlight.enable = true;
+    };
+    
     languages = {
-      nix.enable = true;
-      lua.enable = true;
-      toml.enable = true;
+      nix = {
+        enable = true;
+        treesitter.enable = true;
+      };
     };
 
     lineNumberMode = "number";
