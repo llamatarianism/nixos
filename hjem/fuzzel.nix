@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  hjem.users.lune.files.".config/foot/foot.ini" = {
+  hjem.users.lune.files.".config/fuzzel/fuzzel.ini" = {
     generator = lib.generators.toINI {};
     value = {
       main = {
