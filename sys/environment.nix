@@ -87,6 +87,7 @@
     steam
     foot
     tree
+    bat
   ];
 
   environment.variables = {
