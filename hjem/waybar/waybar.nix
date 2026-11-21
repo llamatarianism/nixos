@@ -87,7 +87,7 @@
     };
     "custom/weather" = {
       format = "{text}";
-      exec = "/home/lune/.config/waybar/weather.sh";
+      exec = "weather";
       interval = 120;
     };
     mpris = {
