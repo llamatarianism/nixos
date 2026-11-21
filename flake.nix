@@ -36,8 +36,7 @@
         })
         inputs.hjem.nixosModules.default
 	    ]
-      ++ importTree ./sys
-      ++ importTree ./hjem;
+      ++ importTree ./sys;
     };
   };
 }
