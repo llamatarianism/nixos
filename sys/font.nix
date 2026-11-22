@@ -11,6 +11,8 @@
       nerd-fonts.caskaydia-mono
       nerd-fonts.fantasque-sans-mono
       nerd-fonts.bigblue-terminal
+      nerd-fonts.googlesanscode
+      nerd-fonts.annotationmono
 	    cantarell-fonts
       redhat-official-fonts
       inconsolata
@@ -21,7 +23,7 @@
       enable = true;
   	  defaultFonts = {
         emoji = [ "Noto Color Emoji" ];
-        monospace = [ "Sometype Mono" "SauceCodePro Nerd Font Propo" ];
+        monospace = [ "IntoneMono NFP" "Sometype Mono" "SauceCodePro Nerd Font Propo" ];
         sansSerif = [ "Cantarell" "Noto Sans" ];
         serif = [ "Noto Serif CJK JP" ];
       };

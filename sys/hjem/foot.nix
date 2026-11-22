@@ -4,7 +4,7 @@
     generator = lib.generators.toINI {};
     value = {
       main = {
-        font = "Sometype Mono:size=14";
+        font = "IntoneMono NFP:size=14";
       };
 
       colors-dark = {
