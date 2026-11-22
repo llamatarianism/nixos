@@ -1,14 +1,12 @@
 { lib }:
 path:
-  let
-    files = lib.fileset.toList (lib.fileset.fileFilter (file: file.hasExt "nix") path);
-
-    isUnderscored =
-      file:
-      let
-        relative = lib.removePrefix (toString path + "/") (toString file);
-        parts = lib.splitString "/" relative;
-      in
-        lib.any (part: lib.hasPrefix "_" part) parts;
-    in
-  lib.filter (file: !isUnderscored file) files
+  path
+  |> lib.fileset.fileFilter (file: file.hasExt "nix")
+  |> lib.fileset.toList
+  |> lib.filter (
+    file:
+    toString file
+    |> lib.removePrefix "${toString path}/"
+    |> lib.splitString "/"
+    |> lib.all (part: !lib.hasPrefix "_" part)
+  )
