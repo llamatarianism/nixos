@@ -8,23 +8,20 @@
       noto-fonts-color-emoji
       nerd-fonts.sauce-code-pro
       nerd-fonts.intone-mono
-      nerd-fonts.caskaydia-mono
-      nerd-fonts.fantasque-sans-mono
-      nerd-fonts.bigblue-terminal
-      nerd-fonts.googlesanscode
-      nerd-fonts.annotationmono
 	    cantarell-fonts
       redhat-official-fonts
       inconsolata
       font-awesome
+      roboto
+      libertinus
 	];
 
   	fontconfig = {
       enable = true;
   	  defaultFonts = {
         emoji = [ "Noto Color Emoji" ];
-        monospace = [ "IntoneMono NFP" "Sometype Mono" "SauceCodePro Nerd Font Propo" ];
-        sansSerif = [ "Cantarell" "Noto Sans" ];
+        monospace = [ "Sometype Mono" "SauceCodePro Nerd Font Propo" ];
+        sansSerif = [ "Cantarell" "Roboto" "Noto Sans" ];
         serif = [ "Noto Serif CJK JP" ];
       };
       useEmbeddedBitmaps = true;
