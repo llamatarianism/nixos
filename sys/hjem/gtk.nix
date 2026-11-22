@@ -12,6 +12,7 @@ let
     };
   };
 in
+{ lib, ... }:
 {
   hjem.users.lune.files.".config/gtk-3.0/settings.ini" = {
     generator = lib.generators.toINI {};
