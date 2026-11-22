@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 {
   fonts = {
+    enableDefaultPackages = true;
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
@@ -8,6 +9,7 @@
       noto-fonts-color-emoji
       nerd-fonts.sauce-code-pro
       nerd-fonts.intone-mono
+      alegreya
 	    cantarell-fonts
       redhat-official-fonts
       inconsolata
