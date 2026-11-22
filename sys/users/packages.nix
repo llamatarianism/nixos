@@ -39,5 +39,7 @@
     terminal-rain-lightning
     cava
     btop
+    ghc
+    cabal-install
   ];
 }
