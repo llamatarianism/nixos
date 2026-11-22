@@ -1,6 +1,20 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   users.users.lune.packages = with pkgs; [
+    discord
+    firefox
+    protonmail-desktop
+    gimp
+    adw-gtk3
+    gruvbox-gtk-theme
+    morewaita-icon-theme
+    bibata-cursors
+    bitwarden-cli
+    bitwarden-desktop
+  	inputs.limusic.packages.${pkgs.stdenv.hostPlatform.system}.limusic
+    bat
+    nordend
+    qimgv
     mako
     waybar
     swaybg
@@ -24,5 +38,6 @@
     cmatrix
     terminal-rain-lightning
     cava
+    btop
   ];
 }
