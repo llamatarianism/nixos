@@ -7,6 +7,10 @@
       noto-fonts-cjk-serif
       noto-fonts-color-emoji
       nerd-fonts.sauce-code-pro
+      nerd-fonts.intone-mono
+      nerd-fonts.caskaydia-mono
+      nerd-fonts.fantasque-sans-mono
+      nerd-fonts.bigblue-terminal
 	    cantarell-fonts
       redhat-official-fonts
       inconsolata
