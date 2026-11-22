@@ -1,5 +1,7 @@
+{ pkgs, ... }:
 {
   programs.steam.enable = true;
+  programs.steam.extraPackages = [ pkgs.bibata-cursors ];
 
   programs.fish.enable = true;
 
