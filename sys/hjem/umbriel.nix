@@ -6,7 +6,7 @@
       "mako"
       "keyd-application-mapper -dv"
       "bw serve --hostname 127.0.0.1 --port 8087"
-      "$HOME/scripts/wallpaper_random.sh"
+      "wallpaper_random"
       "foot --server"
     ];
     general.show_cheatsheet = false;

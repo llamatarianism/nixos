@@ -1,9 +1,10 @@
 {
   hjem.users.lune.files.".config/fish/config.fish".text = ''
     set -U fish_greeting ""
-    set -gx EDITOR "nvim"
-    set -gx VISUAL "nvim"
-    set -gx TERM   "foot"
+    set -gx EDITOR       "nvim"
+    set -gx VISUAL       "nvim"
+    set -gx TERM         "foot"
+    set -gx NH_FLAKE     "$HOME/.config/nixos"
       
     function fish_prompt
       set -l last_status $status

@@ -1,6 +1,6 @@
 wallpath="$(find "$HOME"/Pictures/Wallpapers -type f | shuf -n 1)"
 
-pid="$(pgrep swaybg 2>/dev/null)"
+pid="$(pgrep swaybg 2>/dev/null || true)"
 
 swaybg -i "$wallpath" -m fill &
 sleep 1
