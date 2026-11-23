@@ -41,5 +41,6 @@
     btop
     ghc
     cabal-install
+    khal
   ];
 }
