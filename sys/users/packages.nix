@@ -11,7 +11,6 @@
     bibata-cursors
     bitwarden-cli
     bitwarden-desktop
-    (pkgs.callPackage "${inputs.limusic}/pkgs/limusic/package.nix" { })
     bat
     nordend
     qimgv

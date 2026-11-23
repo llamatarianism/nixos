@@ -69,22 +69,6 @@
         "type": "github"
       }
     },
-    "limusic": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1794162994,
-        "narHash": "sha256-DGaklsYcUZE22o0ARTP/DgfViDiJkBG9X4c2+5OlVzc=",
-        "owner": "arch-fan",
-        "repo": "nur-packages",
-        "rev": "d8530cc2eab85a67b13c20e06f81c72c5ad65783",
-        "type": "github"
-      },
-      "original": {
-        "owner": "arch-fan",
-        "repo": "nur-packages",
-        "type": "github"
-      }
-    },
     "microfetch": {
       "flake": false,
       "locked": {
@@ -203,7 +187,6 @@
     "root": {
       "inputs": {
         "hjem": "hjem",
-        "limusic": "limusic",
         "microfetch": "microfetch",
         "nixpkgs": "nixpkgs",
         "nordend": "nordend",

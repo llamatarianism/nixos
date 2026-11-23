@@ -14,10 +14,6 @@
       flake = false;
     };
     umbriel.url = "github:noctalia-dev/umbriel/cachix";
-    limusic = {
-      url = "github:arch-fan/nur-packages";
-      flake = false;
-    };
     nordend = {
       url = "github:pankaspe/nordend-fm";
       inputs.nixpkgs.follows = "nixpkgs";
