@@ -43,5 +43,7 @@
     khal
     rmpc
     mpd-mpris
+    yt-dlp
+    nicotine-plus
   ];
 }

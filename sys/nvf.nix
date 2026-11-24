@@ -60,6 +60,9 @@
         treesitter = {
           enable = true;
           highlight.enable = true;
+          grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
+            ron
+          ];
         };
 
         languages = {

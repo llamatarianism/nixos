@@ -5,11 +5,11 @@
     mpd-mpris
   ];
 
-  systemd.user.services.mpd = {
-    enable = true;
-  };
-
-  systemd.user.services.mpd-mpris.wantedBy = [ "default.target" ];
+  systemd.user.services.mpd.wantedBy = [ "default.target" ];
+  systemd.user.services.mpd-mpris = {
+    wantedBy = [ "default.target" ];
+    after = [ "mpd.service" ];
+  }; 
 
   hjem.users.lune.files.".config/mpd/mpd.conf".text = ''
     music_directory "/home/lune/Music"

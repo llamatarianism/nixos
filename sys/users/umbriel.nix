@@ -114,7 +114,6 @@
       "Mod+R"         = "spawn launcher";
       "Mod+D"         = "spawn power_menu";
       "Mod+E"         = "spawn quick_edit";
-      "Mod+Y"         = "spawn foot -e yazi";
       "Mod+A"         = "spawn noctalia msg panel-toggle clipboard";
       "Mod+W"         = "spawn wallpaper_selector";
       "Mod+Shift+W"   = "spawn wallpaper_random";
@@ -129,7 +128,7 @@
       "Mod+Space"     = "spawn playerctl play-pause";
       "Mod+Alt+Right" = "column-focus-tab-next";
       "Mod+V"         = "window-toggle-floating";
-      "Mod+M"         = "window-toggle-maximize-to-edges";
+      "Mod+M"         = "spawn footclient -e rmpc";
       "Mod+F"         = "window-toggle-fullscreen";
       "Mod+J"         = "window-swap-next";
       "Mod+1"         = "workspace-switch 1";
