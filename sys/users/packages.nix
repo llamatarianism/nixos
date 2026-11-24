@@ -41,5 +41,7 @@
     ghc
     cabal-install
     khal
+    rmpc
+    mpd-mpris
   ];
 }

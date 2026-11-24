@@ -47,6 +47,10 @@
         default_floating_size_px = { width = 576; height = 600; };
         default_position = { x = 112; y = 0; anchor = "center"; };
       }
+      {
+        match.app_id = "limusic";
+        blur = false;
+      }
     ];
 
     overview = {

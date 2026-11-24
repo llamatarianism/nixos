@@ -4,7 +4,7 @@
     generator = lib.generators.toINI {};
     value = {
       main = {
-        font = "Intel One Mono:weight=light:size=10";
+        font = "Intel One Mono:weight=light:size=12";
         horizontal-pad = 20;
         icon-theme = "MoreWaita";
       };
