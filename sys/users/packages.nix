@@ -45,5 +45,6 @@
     mpd-mpris
     yt-dlp
     nicotine-plus
+    audacity
   ];
 }
