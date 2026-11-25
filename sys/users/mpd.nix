@@ -21,6 +21,12 @@
       buffer_time "50000"
       period_time "12500"
     }
+    audio_output {
+      type "fifo"
+      name "myfifo"
+      path "/tmp/mpd.fifo"
+      format "44100:16:2"
+    }
   '';
 
 
